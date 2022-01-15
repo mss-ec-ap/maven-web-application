@@ -1,0 +1,75 @@
+pipeline
+{
+agent any
+tools
+{
+maven 'maven3.8.4'
+}
+triggers {
+  pollSCM '* * * * *'
+ // cron '* * * * *'
+}
+options {
+  timestamps()
+  buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
+}
+
+stages{
+stage('CheckoutCode'){
+steps{
+
+git branch: 'development', credentialsId: 'd19921f2-c700-4d80-a951-3a164f347a41', url: 'https://github.com/mss-ec-ap/maven-web-application.git'
+}
+}
+
+//DO the Build
+stage('Build'){
+steps{
+sh "mvn clean package"
+}
+}
+stage('SonarQubeReport'){
+steps{
+sh "mvn sonar:sonar"
+
+}
+}
+stage('UploadArtifactIntoNexus')
+{
+    steps{
+sh "mvn clean deploy"
+}
+}
+stage('DeployIntoTomcat')
+{ 
+    steps{
+    sshagent(['6fd46a48-d3a9-4444-a120-74bd2625e1dc']) {
+ sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.232.83.17:/opt/apache-tomcat-9.0.56/webapps/"
+}
+}
+}
+}//stages closing
+post {
+  always {
+emailext body: '''Build Over..
+
+Regards,
+Amruta''', subject: 'Build Over', to: 'desh.ammu@gmail.com'
+  }
+  success {
+    emailext body: '''Build Over.. Success
+
+Regards,
+Amruta''', subject: 'Build Over', to: 'desh.ammu@gmail.com'
+  }
+  failure {
+    emailext body: '''Build Over.. Fail
+
+Regards,
+Amruta''', subject: 'Build Over', to: 'desh.ammu@gmail.com'
+  }
+}
+
+
+
+}//pipeline closing

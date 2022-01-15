@@ -14,7 +14,7 @@ stage('ExecuteSonarQubeReport')
 {
 sh "${mavenHome}/bin/mvn sonar:sonar"
 }
-
+/*
 stage('UploadArtifactIntoNexus')
 {
 sh "${mavenHome}/bin/mvn clean deploy"
@@ -33,4 +33,5 @@ stage('SendNotifications')
 Regards,
 Amruta''', subject: 'Biuld Over', to: 'desh.ammu@gmail.com'
     }
+  */
 }

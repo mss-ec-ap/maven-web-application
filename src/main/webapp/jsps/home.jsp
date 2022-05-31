@@ -10,7 +10,7 @@
 </head>
 <body>
 <h1 align="center">Poll SCM/h1>
-<h1 align="center">  Welcome everbody</h1>
+<h1 align="center"> Welcome to pune</h1>
 <hr>
 <div style="text-align: center;">
 	<span>
